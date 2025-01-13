@@ -50,8 +50,8 @@ function extendCollection(Mongo) {
            * If index already exists with different options, remove old version and re-create:
            * https://docs.mongodb.com/manual/reference/command/createIndexes/#considerations
            */
-          this.ensureNoIndex(selector);
-          this.createIndex(selector, options);
+          await this.ensureNoIndexAsync(selector);
+          await this.createIndexAsync(selector, options);
           return;
         }
 
@@ -62,6 +62,16 @@ function extendCollection(Mongo) {
     ensureNoIndex(selector) {
       try {
         this._dropIndex(selector);
+      } catch (error) {
+        if (error.codeName !== 'IndexNotFound') {
+          console.error(error, 'Error when calling ensureNoIndex');
+        }
+      }
+    },
+
+    async ensureNoIndexAsync(selector) {
+      try {
+        await this.rawCollection().dropIndex(selector);
       } catch (error) {
         if (error.codeName !== 'IndexNotFound') {
           console.error(error, 'Error when calling ensureNoIndex');

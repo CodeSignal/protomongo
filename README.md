@@ -55,6 +55,12 @@ Collection.ensureNoIndex(selector);
 The reverse of `ensureIndex`. You might want to call this in `Meteor.startup` to make sure an index has been removed in all of your deployed environments.
 
 ```js
+Collection.ensureNoIndexAsync(selector);
+```
+
+Similar to `ensureNoIndex`, but returns a Promise that is resolved when the index is dropped. This method is compatible with Meteor 3.0.
+
+```js
 Collection.aggregate(pipeline, ?options);
 ```
 

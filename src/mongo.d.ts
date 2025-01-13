@@ -38,6 +38,7 @@ declare module 'meteor/mongo' {
         keys: { [key: string]: number | string } | string,
         options?: { [key: string]: any }
       ): Promise<void>;
+      ensureNoIndexAsync(keys: { [key: string]: number | string } | string): Promise<void>;
 
       getIndexes(): Promise<any[]>;
     }
