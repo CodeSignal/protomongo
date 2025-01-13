@@ -20,16 +20,7 @@ function extendCollection(Mongo) {
     },
 
     getIndexes() {
-      return new Promise((resolve, reject) => {
-        this.rawCollection().indexes((error, indexes) => {
-          if (error) {
-            reject(error);
-            return;
-          }
-
-          resolve(indexes);
-        });
-      });
+      return this.rawCollection().indexes();
     },
 
     ensureIndex(selector, options) {
