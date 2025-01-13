@@ -41,6 +41,24 @@ function extendCollection(Mongo) {
       }
     },
 
+    async ensureIndexAsync(selector, options) {
+      try {
+        await this.createIndexAsync(selector, options);
+      } catch (error) {
+        if (error?.code === ERROR_CODES.indexOptionsConflict) {
+          /**
+           * If index already exists with different options, remove old version and re-create:
+           * https://docs.mongodb.com/manual/reference/command/createIndexes/#considerations
+           */
+          this.ensureNoIndex(selector);
+          this.createIndex(selector, options);
+          return;
+        }
+
+        throw error;
+      }
+    },
+
     ensureNoIndex(selector) {
       try {
         this._dropIndex(selector);

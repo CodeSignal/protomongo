@@ -43,6 +43,12 @@ Collection.ensureIndex(selector, options);
 Ensures an index exists. Similar to the built-in `createIndex`, but handles the case where the index already exists with different options by removing and re-adding the index with the new options. To ensure your database has the same indexes across different environments, you might want to add `ensureIndex` calls to `Meteor.startup`.
 
 ```js
+Collection.ensureIndexAsync(selector, options);
+```
+
+Similar to `ensureIndex`, but returns a Promise that is resolved when the index is created. This method is compatible with Meteor 3.0.
+
+```js
 Collection.ensureNoIndex(selector);
 ```
 
