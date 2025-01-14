@@ -20,16 +20,7 @@ function extendCollection(Mongo) {
     },
 
     getIndexes() {
-      return new Promise((resolve, reject) => {
-        this.rawCollection().indexes((error, indexes) => {
-          if (error) {
-            reject(error);
-            return;
-          }
-
-          resolve(indexes);
-        });
-      });
+      return this.rawCollection().indexes();
     },
 
     ensureIndex(selector, options) {
@@ -50,9 +41,37 @@ function extendCollection(Mongo) {
       }
     },
 
+    async ensureIndexAsync(selector, options) {
+      try {
+        await this.createIndexAsync(selector, options);
+      } catch (error) {
+        if (error?.code === ERROR_CODES.indexOptionsConflict) {
+          /**
+           * If index already exists with different options, remove old version and re-create:
+           * https://docs.mongodb.com/manual/reference/command/createIndexes/#considerations
+           */
+          await this.ensureNoIndexAsync(selector);
+          await this.createIndexAsync(selector, options);
+          return;
+        }
+
+        throw error;
+      }
+    },
+
     ensureNoIndex(selector) {
       try {
         this._dropIndex(selector);
+      } catch (error) {
+        if (error.codeName !== 'IndexNotFound') {
+          console.error(error, 'Error when calling ensureNoIndex');
+        }
+      }
+    },
+
+    async ensureNoIndexAsync(selector) {
+      try {
+        await this.rawCollection().dropIndex(selector);
       } catch (error) {
         if (error.codeName !== 'IndexNotFound') {
           console.error(error, 'Error when calling ensureNoIndex');

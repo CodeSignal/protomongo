@@ -28,11 +28,24 @@ declare module 'meteor/mongo' {
         toArray: () => Promise<Array<A>>;
       };
 
+      /**
+       * @deprecated Use ensureIndexAsync instead.
+       */
       ensureIndex(
         keys: { [key: string]: number | string } | string,
         options?: { [key: string]: any }
       ): void;
+      /**
+       * @deprecated Use ensureNoIndexAsync instead.
+       */
       ensureNoIndex(keys: { [key: string]: number | string } | string): void;
+
+      ensureIndexAsync(
+        keys: { [key: string]: number | string } | string,
+        options?: { [key: string]: any }
+      ): Promise<void>;
+      ensureNoIndexAsync(keys: { [key: string]: number | string } | string): Promise<void>;
+
       getIndexes(): Promise<any[]>;
     }
   }
